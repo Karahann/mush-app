@@ -1,4 +1,5 @@
 import { UUID } from 'crypto';
+import { CommentModel } from 'src/api/comment/entities/comment.entity';
 import { DraftModel } from 'src/api/draft/entities/draft.entity';
 import { PostModel } from 'src/api/post/entities/post.entity';
 import {
@@ -41,6 +42,10 @@ export class UserModel {
   @OneToMany(() => PostModel, (post) => post.user)
   @JoinColumn()
   posts: PostModel[];
+
+  @OneToMany(() => CommentModel, (comment) => comment.user)
+  @JoinColumn()
+  comments: CommentModel[];
 
   @CreateDateColumn()
   createdAt: Date;

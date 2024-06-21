@@ -6,6 +6,7 @@ import { LoginType } from './types/loginType';
 import { Register } from './dto/register.dto';
 import { UserService } from '../user/user.service';
 import { Login } from './dto/login.dto';
+import { CurrentUser } from './types/currentUser';
 
 @Injectable()
 export class AuthService {
@@ -46,12 +47,10 @@ export class AuthService {
     }
 
     const { id, name } = user;
-    return {
-      user: {
-        id,
-        name,
-      },
-      token: this.jwtService.sign({ id, name }, { expiresIn: '1y', secret: process.env.JWT_SECRET }),
-    };
+    return { user: { id, name }, token: this.jwtService.sign({ id, name }, { expiresIn: '1y', secret: process.env.JWT_SECRET }) };
+  }
+
+  async getMe(user: CurrentUser) {
+    return user;
   }
 }
