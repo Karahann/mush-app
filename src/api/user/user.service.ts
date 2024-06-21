@@ -27,6 +27,15 @@ export class UserService {
   };
 
   async create(data: Create, file?: Express.Multer.File): Promise<UserModel> {
+    const isUserNameExist = await this.userRepository.findOne({ where: { userName: data.userName } });
+    if (isUserNameExist) {
+      throw new Error('User name already exist');
+    }
+
+    const isEmailExist = await this.userRepository.findOne({ where: { email: data.email } });
+    if (isEmailExist) {
+      throw new Error('Email already exist');
+    }
     const user = await this.userRepository.save(data);
     if (file) {
       const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;

@@ -7,6 +7,8 @@ import { Update } from './dto/update';
 import { CurrentUser } from '../auth/types/currentUser';
 import { randomUUID } from 'crypto';
 import { FileService } from '../file/file.service';
+import { FilterOperator, PaginateConfig, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
+import { RelationColumn } from 'nestjs-paginate/lib/helper';
 
 @Injectable()
 export class PostService {
@@ -15,6 +17,15 @@ export class PostService {
     private readonly postRepository: Repository<PostModel>,
     private readonly fileService: FileService,
   ) {}
+  private PAGINATION_CONFIG: PaginateConfig<PostModel> = {
+    sortableColumns: ['createdAt'],
+    searchableColumns: [],
+    defaultSortBy: [],
+    filterableColumns: {
+      id: [FilterOperator.EQ, FilterOperator.IN],
+    },
+    maxLimit: 0,
+  };
 
   async create(data: Create, user: CurrentUser, file: Express.Multer.File): Promise<PostModel> {
     const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
@@ -36,11 +47,18 @@ export class PostService {
     });
   }
 
+  async findAll(query: PaginateQuery, relations: RelationColumn<string>[] = []): Promise<Paginated<PostModel>> {
+    return paginate(query, this.postRepository, {
+      ...this.PAGINATION_CONFIG,
+      relations,
+    });
+  }
+
   async findOne(options: FindOneOptions): Promise<PostModel> {
     return await this.postRepository.findOne(options);
   }
 
-  async findAll(): Promise<PostModel[]> {
+  async find(): Promise<PostModel[]> {
     return await this.postRepository.find();
   }
 

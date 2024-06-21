@@ -6,6 +6,8 @@ import { CurrentUser } from '../auth/types/currentUser';
 import { Create } from './dto/create';
 import { randomUUID } from 'crypto';
 import { FileService } from '../file/file.service';
+import { FilterOperator, PaginateConfig, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
+import { RelationColumn } from 'nestjs-paginate/lib/helper';
 
 @Injectable()
 export class DraftService {
@@ -14,6 +16,15 @@ export class DraftService {
     private draftRepository: Repository<DraftModel>,
     private readonly fileService: FileService,
   ) {}
+  private PAGINATION_CONFIG: PaginateConfig<DraftModel> = {
+    sortableColumns: ['createdAt'],
+    searchableColumns: [],
+    defaultSortBy: [],
+    filterableColumns: {
+      id: [FilterOperator.EQ, FilterOperator.IN],
+    },
+    maxLimit: 0,
+  };
 
   async create(data: Create, user: CurrentUser, file: Express.Multer.File): Promise<DraftModel> {
     const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
@@ -35,11 +46,18 @@ export class DraftService {
     });
   }
 
+  async findAll(query: PaginateQuery, relations: RelationColumn<string>[] = []): Promise<Paginated<DraftModel>> {
+    return paginate(query, this.draftRepository, {
+      ...this.PAGINATION_CONFIG,
+      relations,
+    });
+  }
+
   async findOne(data: any) {
     return await this.draftRepository.findOne(data);
   }
 
-  async findAll() {
+  async find() {
     return await this.draftRepository.find();
   }
 
