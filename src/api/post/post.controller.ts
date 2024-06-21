@@ -8,6 +8,7 @@ import { CurrentUser } from '../auth/types/currentUser';
 import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { RelationDecorator } from 'nestjs-paginate-relations-filter-middleware';
+import { response } from 'express';
 
 @Controller('post')
 export class PostController {
@@ -17,11 +18,13 @@ export class PostController {
   @Post()
   @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
   async createPost(@Body() data: Create, @User() user: CurrentUser, @UploadedFile() file: Express.Multer.File) {
-    return await this.postService.create(data, user, file);
+    const response = await this.postService.create(data, user, file);
+    return { success: true, data: response };
   }
 
   @Get()
-  findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
-    return this.postService.findAll(query, relation);
+  async findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
+    const response = await this.postService.findAll(query, relation);
+    return { success: true, data: response };
   }
 }

@@ -11,7 +11,7 @@ import { Login } from './dto/login.dto';
 export class AuthService {
   constructor(private readonly userService: UserService, private readonly jwtService: JwtService) {}
   static BCRPYT_SALT_ROUND = 10;
-  async register(data: Register, file?: Express.Multer.File): Promise<UserModel> {
+  async register(data: Register, file?: Express.Multer.File) {
     const user = await this.userService.findOne({
       where: { email: data.email },
     });
@@ -31,18 +31,18 @@ export class AuthService {
     );
   }
 
-  async login(data: Login): Promise<LoginType> {
+  async login(data: Login) {
     const user = await this.userService.findOne({
       where: { email: data.email },
     });
 
     if (!user) {
-      throw new NotFoundException('User Not Found');
+      throw new BadRequestException('Kullanıcı bulunamadı!');
     }
 
     let compareResult = await bcrypt.compare(data.password, user.password);
     if (!compareResult) {
-      throw new Error('Giriş bilgileri yanlış!');
+      throw new BadRequestException('Giriş bilgileri yanlış!');
     }
 
     const { id, name } = user;

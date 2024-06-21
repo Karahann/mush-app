@@ -15,11 +15,13 @@ export class DraftController {
   @Post()
   @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
   async createPost(@Body() data: Create, @User() user: CurrentUser, @UploadedFile() file: Express.Multer.File) {
-    return await this.draftService.create(data, user, file);
+    const response = await this.draftService.create(data, user, file);
+    return { success: true, data: response };
   }
 
   @Get()
-  findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
-    return this.draftService.findAll(query, relation);
+  async findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
+    const response = await this.draftService.findAll(query, relation);
+    return { success: true, data: response };
   }
 }

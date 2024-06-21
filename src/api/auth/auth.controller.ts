@@ -14,12 +14,14 @@ export class AuthController {
   @Post('register')
   @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
   async register(@Body() register: Register, @UploadedFile() file?: Express.Multer.File) {
-    return await this.AuthService.register(register, file);
+    const data = await this.AuthService.register(register, file);
+    return { success: true, data: data };
   }
 
   @SkipAuth()
   @Post('login')
   async login(@Body() login: Login) {
-    return await this.AuthService.login(login);
+    const data = await this.AuthService.login(login);
+    return { success: true, data: data };
   }
 }

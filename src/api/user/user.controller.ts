@@ -9,12 +9,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
-    return this.userService.findAll(query, relation);
+  async findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
+    const response = await this.userService.findAll(query, relation);
+    return { success: true, data: response };
   }
 
   @Put()
   async update(@Body() data: any, @User() user: any) {
-    return await this.userService.update(user.id, data);
+    const response = await this.userService.update(user.id, data);
+    return { success: true, data: response };
   }
 }

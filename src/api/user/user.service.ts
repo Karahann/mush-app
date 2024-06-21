@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entities/user.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -29,12 +29,12 @@ export class UserService {
   async create(data: Create, file?: Express.Multer.File): Promise<UserModel> {
     const isUserNameExist = await this.userRepository.findOne({ where: { userName: data.userName } });
     if (isUserNameExist) {
-      throw new Error('User name already exist');
+      throw new BadRequestException('Kullanıcı adı kullanılmaktadır!');
     }
 
     const isEmailExist = await this.userRepository.findOne({ where: { email: data.email } });
     if (isEmailExist) {
-      throw new Error('Email already exist');
+      throw new BadRequestException('Mail kullanılmaktadır!');
     }
     const user = await this.userRepository.save(data);
     if (file) {
