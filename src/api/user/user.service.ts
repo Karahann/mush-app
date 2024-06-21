@@ -17,20 +17,22 @@ export class UserService {
 
   async create(data: Create, file?: Express.Multer.File): Promise<UserModel> {
     const user = await this.userRepository.save(data);
-    const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
-    const filePath = 'mush-images';
-    const createdFile = await this.fileService.create(file, {
-      modelName: UserModel.name,
-      modelId: user.id,
-      fileName: imageName,
-      mimeType: file.mimetype,
-      size: file.size,
-      disk: 'gcp',
-      path: filePath,
-      isPublic: true,
-    });
-    await this.update(user.id, { profileImage: createdFile.url });
-    return user;
+    if (file) {
+      const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
+      const filePath = 'mush-images';
+      const createdFile = await this.fileService.create(file, {
+        modelName: UserModel.name,
+        modelId: user.id,
+        fileName: imageName,
+        mimeType: file.mimetype,
+        size: file.size,
+        disk: 'gcp',
+        path: filePath,
+        isPublic: true,
+      });
+      await this.update(user.id, { profileImage: createdFile.url });
+    }
+    return await this.findOne({ where: { id: user.id } });
   }
 
   async findOne(data: FindOneOptions): Promise<UserModel> {
