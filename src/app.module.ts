@@ -15,6 +15,7 @@ import { AuthModule } from './api/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './api/user/user.module';
 import { FileModule } from './api/file/file.module';
+import { LikeModule } from './api/like/like.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
@@ -28,6 +29,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     JwtModule,
     UserModule,
     FileModule,
+    LikeModule,
   ],
   controllers: [DraftController, AppController],
   providers: [

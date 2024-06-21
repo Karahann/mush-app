@@ -23,8 +23,8 @@ export class UserController {
   }
 
   @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
-  @Put('profile-image/:id')
-  updateProfileImage(@UploadedFile() file: Express.Multer.File, @Param('id') userId: string) {
-    return this.userService.updateProfileImage(file, userId);
+  @Put('profile-image')
+  updateProfileImage(@UploadedFile() file: Express.Multer.File, @User() user: any) {
+    return this.userService.updateProfileImage(file, user.id);
   }
 }

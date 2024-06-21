@@ -8,6 +8,7 @@ import { FileService } from '../file/file.service';
 import { randomUUID } from 'crypto';
 import { FilterOperator, PaginateConfig, PaginateQuery, Paginated, paginate } from 'nestjs-paginate';
 import { RelationColumn } from 'nestjs-paginate/lib/helper';
+import { CurrentUser } from '../auth/types/currentUser';
 
 @Injectable()
 export class UserService {

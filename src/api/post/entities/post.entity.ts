@@ -1,4 +1,5 @@
-import { UserModel } from "src/api/user/entities/user.entity";
+import { LikeModel } from 'src/api/like/entities/like.entity';
+import { UserModel } from 'src/api/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,25 +8,26 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
 @Entity()
 export class PostModel {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true, type: "varchar" })
+  @Column({ nullable: true, type: 'varchar' })
   description: string;
 
-  @Column({ type: "varchar" })
+  @Column({ type: 'varchar' })
   image: string;
 
-  @Column("decimal", { nullable: true, precision: 6, scale: 2 })
+  @Column('decimal', { nullable: true, precision: 6, scale: 2 })
   latitude: number;
 
-  @Column("decimal", { nullable: true, precision: 6, scale: 2 })
+  @Column('decimal', { nullable: true, precision: 6, scale: 2 })
   longtitude: number;
 
   @Column({ nullable: true })
@@ -38,6 +40,10 @@ export class PostModel {
   })
   @JoinColumn()
   user: UserModel;
+
+  @OneToMany(() => LikeModel, (likes) => likes.post)
+  @JoinColumn()
+  likes: LikeModel[];
 
   @CreateDateColumn()
   createdAt: Date;
