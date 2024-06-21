@@ -6,7 +6,7 @@ import { CurrentUser } from '../auth/types/currentUser';
 import { User } from 'src/common/decorators/get-me.decorator';
 import { Create } from './dto/create';
 
-@Controller()
+@Controller('draft')
 export class DraftController {
   constructor(private readonly draftService: DraftService) {}
 
