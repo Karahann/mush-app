@@ -22,6 +22,9 @@ export class UserModel {
   @Column({ type: 'varchar' })
   name: string;
 
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  userName: string;
+
   @Column({ type: 'varchar' })
   email: string;
 
