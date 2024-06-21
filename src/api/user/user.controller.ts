@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Put, Query, Response, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Response, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from 'src/common/decorators/get-me.decorator';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { RelationDecorator } from 'nestjs-paginate-relations-filter-middleware';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { imageFileFilter } from 'src/common/helper/upload-image.helper';
 
 @Controller('user')
 export class UserController {
@@ -18,5 +20,11 @@ export class UserController {
   async update(@Body() data: any, @User() user: any) {
     const response = await this.userService.update(user.id, data);
     return { success: true, data: response };
+  }
+
+  @UseInterceptors(FileInterceptor('file', { fileFilter: imageFileFilter }))
+  @Put('profile-image/:id')
+  updateProfileImage(@UploadedFile() file: Express.Multer.File, @Param('id') userId: string) {
+    return this.userService.updateProfileImage(file, userId);
   }
 }

@@ -38,19 +38,7 @@ export class UserService {
     }
     const user = await this.userRepository.save(data);
     if (file) {
-      const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
-      const filePath = 'mush-images';
-      const createdFile = await this.fileService.create(file, {
-        modelName: UserModel.name,
-        modelId: user.id,
-        fileName: imageName,
-        mimeType: file.mimetype,
-        size: file.size,
-        disk: 'gcp',
-        path: filePath,
-        isPublic: true,
-      });
-      await this.update(user.id, { profileImage: createdFile.url });
+      this.updateProfileImage(file, user.id);
     }
     return await this.findOne({ where: { id: user.id } });
   }
@@ -68,6 +56,42 @@ export class UserService {
 
   async find(options: FindManyOptions): Promise<UserModel[]> {
     return await this.userRepository.find(options);
+  }
+
+  async findById(id: string): Promise<UserModel> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new BadRequestException('Kullanıcı bulunamadı!');
+    }
+    return user;
+  }
+
+  async updateProfileImage(file: Express.Multer.File, userId: string) {
+    if (!file) {
+      throw new BadRequestException('You should upload a file!');
+    }
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User Not Found');
+    }
+    await this.ifUserImageExistOnlyUpdate(file, user);
+  }
+
+  async ifUserImageExistOnlyUpdate(file: Express.Multer.File, user: UserModel) {
+    const imageName = `${randomUUID()}.${file.originalname.split('.').pop()}`;
+    const filePath = 'user-profile-images';
+
+    const createdFile = await this.fileService.create(file, {
+      modelName: UserModel.name,
+      modelId: user.id,
+      fileName: imageName,
+      mimeType: file.mimetype,
+      size: file.size,
+      disk: 'gcp',
+      path: filePath,
+      isPublic: true,
+    });
+    await this.update(user.id, { profileImage: createdFile.url });
   }
 
   async update(id: string, data: Update) {
