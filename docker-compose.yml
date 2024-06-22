@@ -10,6 +10,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # nestjs-app:
+  #   build: .
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     - DB_HOST=postgresql
+  #     - DB_PORT=5432
+  #     - DB_USER=mush
+  #     - DB_PASS=mush
+  #   depends_on:
+  #     - postgresql
+
 
 volumes:
   postgres_data:

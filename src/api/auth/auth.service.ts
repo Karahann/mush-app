@@ -51,6 +51,9 @@ export class AuthService {
   }
 
   async getMe(user: CurrentUser) {
-    return user;
+    const findedUser = await this.userService.findOne({
+      where: { id: user.id },
+    });
+    return findedUser;
   }
 }
