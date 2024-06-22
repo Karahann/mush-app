@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PostService } from './post.service';
 import { Create } from './dto/create';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -25,6 +25,12 @@ export class PostController {
   @Get()
   async findAll(@Paginate() query: PaginateQuery, @RelationDecorator() relation: any) {
     const response = await this.postService.findAll(query, relation);
+    return { success: true, data: response };
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    const response = await this.postService.delete(id);
     return { success: true, data: response };
   }
 }
